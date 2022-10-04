@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>status</title>
+  </head>
+  <body>
+    <script>
+      // 工作状态
+      function Work(name) {
+        this.name = name;
+        this.currentState = null;
+
+        // 工作状态，保存为对应状态对象
+        this.wakeUpState = new WakeUpState(this);
+        // 精神饱满
+        this.energeticState = new EnergeticState(this);
+        // 疲倦
+        this.tiredState = new TiredState(this);
+
+        this.init();
+      }
+
+      Work.prototype.init = function () {
+        this.currentState = this.wakeUpState;
+
+        // 点击事件，用于触发更新状态
+        document.body.onclick = () => {
+          this.currentState.behaviour();
+        };
+      };
+
+      // 更新工作状态
+      Work.prototype.setState = function (state) {
+        this.currentState = state;
+      };
+
+      // 刚醒
+      function WakeUpState(work) {
+        this.work = work;
+      }
+
+      // 刚醒的行为
+      WakeUpState.prototype.behaviour = function () {
+        console.log(this.work.name, ":", "刚醒呢，睡个懒觉先");
+
+        // 只睡了2秒钟懒觉就精神了..
+        setTimeout(() => {
+          this.work.setState(this.work.energeticState);
+        }, 2 * 1000);
+      };
+
+      // 精神饱满
+      function EnergeticState(work) {
+        this.work = work;
+      }
+
+      EnergeticState.prototype.behaviour = function () {
+        console.log(this.work.name, ":", "超级精神的");
+
+        // 才精神1秒钟就发困了
+        setTimeout(() => {
+          this.work.setState(this.work.tiredState);
+        }, 1000);
+      };
+
+      // 疲倦
+      function TiredState(work) {
+        this.work = work;
+      }
+
+      TiredState.prototype.behaviour = function () {
+        console.log(this.work.name, ":", "怎么肥事，好困");
+
+        // 不知不觉，又变成了刚醒着的状态... 不断循环呀
+        setTimeout(() => {
+          this.work.setState(this.work.wakeUpState);
+        }, 1000);
+      };
+
+      var work = new Work("曹操");
+    </script>
+    <style>
+      body {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </body>
+</html>
